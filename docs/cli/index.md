@@ -156,7 +156,7 @@ When using the `--stats` flag with encode, the CLI builds the full TOON string o
 | `--delimiter <char>` | Array delimiter: `,` (comma), tab character, `\|` (pipe). Pass tab as `$'\t'` in bash/zsh |
 | `--indent <number>` | Indentation size (default: `2`) |
 | `--stats` | Show token count estimates and savings (encode only) |
-| `--no-strict` | Skip decode validation; last-write-wins on duplicate keys |
+| `--no-strict` | Skip decode validation (array counts, indentation, header delimiter); last-write-wins on duplicate keys |
 | `--keyFolding <mode>` | Key folding mode: `off`, `safe` (default: `off`) |
 | `--flattenDepth <number>` | Maximum segments to fold (default: `Infinity`) – requires `--keyFolding safe` |
 | `--expandPaths <mode>` | Path expansion mode: `off`, `safe` (default: `off`) |
@@ -231,7 +231,7 @@ Skip validation for faster, more forgiving decoding:
 toon data.toon --no-strict -o output.json
 ```
 
-With `--no-strict`, the decoder stops enforcing array count matches, indentation multiples, and delimiter consistency. Duplicate sibling keys no longer throw – the last value wins. Malformed array headers fall back to plain `key: value` lines instead of erroring.
+With `--no-strict`, the decoder stops enforcing array count matches, indentation multiples, and header delimiter mismatches. Duplicate sibling keys no longer throw – the last value wins. Malformed array headers fall back to plain `key: value` lines instead of erroring.
 
 ### Decode Error Output
 

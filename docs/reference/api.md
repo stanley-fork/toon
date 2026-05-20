@@ -256,7 +256,7 @@ console.log(encode(data, { replacer }))
 
 ```yaml
 metadata:
-  created: 2025-01-01T00:00:00Z
+  created: "2025-01-01T00:00:00Z"
 user:
   created: 2025-01-02
 ```

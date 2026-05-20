@@ -25,9 +25,9 @@ Data is in TOON format (2-space indent, arrays show length and fields).
 
 ```toon
 users[3]{id,name,role,lastLogin}:
-  1,Alice,admin,2025-01-15T10:30:00Z
-  2,Bob,user,2025-01-14T15:22:00Z
-  3,Charlie,user,2025-01-13T09:45:00Z
+  1,Alice,admin,"2025-01-15T10:30:00Z"
+  2,Bob,user,"2025-01-14T15:22:00Z"
+  3,Charlie,user,"2025-01-13T09:45:00Z"
 ```
 
 Task: Summarize the user roles and their last activity.
@@ -52,9 +52,9 @@ Data is in TOON format (2-space indent, arrays show length and fields).
 
 ```toon
 users[3]{id,name,role,lastLogin}:
-  1,Alice,admin,2025-01-15T10:30:00Z
-  2,Bob,user,2025-01-14T15:22:00Z
-  3,Charlie,user,2025-01-13T09:45:00Z
+  1,Alice,admin,"2025-01-15T10:30:00Z"
+  2,Bob,user,"2025-01-14T15:22:00Z"
+  3,Charlie,user,"2025-01-13T09:45:00Z"
 ```
 
 Task: Return only users with role "user" as TOON. Use the same header format. Set [N] to match the row count. Output only the code block.
@@ -64,8 +64,8 @@ Task: Return only users with role "user" as TOON. Use the same header format. Se
 
 ```toon
 users[2]{id,name,role,lastLogin}:
-  2,Bob,user,2025-01-14T15:22:00Z
-  3,Charlie,user,2025-01-13T09:45:00Z
+  2,Bob,user,"2025-01-14T15:22:00Z"
+  3,Charlie,user,"2025-01-13T09:45:00Z"
 ```
 
 The model adjusts `[N]` to `2` and generates two rows.
@@ -166,10 +166,10 @@ System logs in TOON format (tab-separated):
 
 ```toon
 events[4	]{id	level	message	timestamp}:
-  1	error	Connection timeout	2025-01-15T10:00:00Z
-  2	warn	Slow query	2025-01-15T10:05:00Z
-  3	info	User login	2025-01-15T10:10:00Z
-  4	error	Database error	2025-01-15T10:15:00Z
+  1	error	Connection timeout	"2025-01-15T10:00:00Z"
+  2	warn	Slow query	"2025-01-15T10:05:00Z"
+  3	info	User login	"2025-01-15T10:10:00Z"
+  4	error	Database error	"2025-01-15T10:15:00Z"
 ```
 
 Task: Return only error-level events as TOON. Use the same format.
@@ -182,8 +182,8 @@ import { decode } from '@toon-format/toon'
 
 const modelResponse = `
 events[2	]{id	level	message	timestamp}:
-  1	error	Connection timeout	2025-01-15T10:00:00Z
-  4	error	Database error	2025-01-15T10:15:00Z
+  1	error	Connection timeout	"2025-01-15T10:00:00Z"
+  4	error	Database error	"2025-01-15T10:15:00Z"
 `
 
 const filtered = decode(modelResponse, { strict: true })
