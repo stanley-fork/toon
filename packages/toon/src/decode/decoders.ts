@@ -5,7 +5,7 @@ import { findClosingQuote } from '../shared/string-utils.ts'
 import { ToonDecodeError, withLine } from './errors.ts'
 import { isArrayHeaderContent, isKeyValueContent, mapRowValuesToPrimitives, parseArrayHeaderLine, parseDelimitedValues, parseKeyToken, parsePrimitiveToken } from './parser.ts'
 import { createScanState, parseLinesAsync, parseLinesSync } from './scanner.ts'
-import { assertExpectedCount, validateNoBlankLinesInRange, validateNoExtraListItems, validateNoExtraTabularRows } from './validation.ts'
+import { assertExpectedCount, isDataRow, validateNoBlankLinesInRange, validateNoExtraListItems, validateNoExtraTabularRows } from './validation.ts'
 
 interface DecoderContext { indent: number, strict: boolean }
 
@@ -353,6 +353,10 @@ function* decodeTabularArraySync(
     }
 
     if (line.depth === rowDepth) {
+      if (!isDataRow(line.content, header.delimiter)) {
+        break
+      }
+
       if (startLine === undefined) {
         startLine = line.lineNumber
       }
@@ -786,6 +790,10 @@ async function* decodeTabularArrayAsync(
     }
 
     if (line.depth === rowDepth) {
+      if (!isDataRow(line.content, header.delimiter)) {
+        break
+      }
+
       if (startLine === undefined) {
         startLine = line.lineNumber
       }

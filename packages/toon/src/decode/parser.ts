@@ -34,14 +34,14 @@ export function parseArrayHeaderLine(
   }
   else {
     // Unquoted key - find first bracket
-    bracketStart = content.indexOf(OPEN_BRACKET)
+    bracketStart = findUnquotedChar(content, OPEN_BRACKET)
   }
 
   if (bracketStart === -1) {
     return
   }
 
-  const bracketEnd = content.indexOf(CLOSE_BRACKET, bracketStart)
+  const bracketEnd = findUnquotedChar(content, CLOSE_BRACKET, bracketStart)
   if (bracketEnd === -1) {
     return
   }
@@ -51,8 +51,8 @@ export function parseArrayHeaderLine(
   let braceEnd = colonIndex
 
   // Check for fields segment (braces come after bracket)
-  const braceStart = content.indexOf(OPEN_BRACE, bracketEnd)
-  if (braceStart !== -1 && braceStart < content.indexOf(COLON, bracketEnd)) {
+  const braceStart = findUnquotedChar(content, OPEN_BRACE, bracketEnd)
+  if (braceStart !== -1 && braceStart < findUnquotedChar(content, COLON, bracketEnd)) {
     const gapBeforeBrace = content.slice(bracketEnd + 1, braceStart)
     if (gapBeforeBrace !== '') {
       if (strict) {
@@ -64,14 +64,14 @@ export function parseArrayHeaderLine(
       return
     }
 
-    const foundBraceEnd = content.indexOf(CLOSE_BRACE, braceStart)
+    const foundBraceEnd = findUnquotedChar(content, CLOSE_BRACE, braceStart)
     if (foundBraceEnd !== -1) {
       braceEnd = foundBraceEnd + 1
     }
   }
 
   // Now find colon after brackets and braces
-  colonIndex = content.indexOf(COLON, Math.max(bracketEnd, braceEnd))
+  colonIndex = findUnquotedChar(content, COLON, Math.max(bracketEnd, braceEnd))
   if (colonIndex === -1) {
     return
   }
@@ -113,7 +113,7 @@ export function parseArrayHeaderLine(
   // Check for fields segment
   let fields: string[] | undefined
   if (braceStart !== -1 && braceStart < colonIndex) {
-    const foundBraceEnd = content.indexOf(CLOSE_BRACE, braceStart)
+    const foundBraceEnd = findUnquotedChar(content, CLOSE_BRACE, braceStart)
     if (foundBraceEnd !== -1 && foundBraceEnd < colonIndex) {
       const fieldsContent = content.slice(braceStart + 1, foundBraceEnd)
 
