@@ -1,5 +1,5 @@
 import type { BlankLineInfo, Depth, ParsedLine } from '../types.ts'
-import { SPACE, TAB } from '../constants.ts'
+import { COMMENT_MARKER, SPACE, TAB } from '../constants.ts'
 import { ToonDecodeError } from './errors.ts'
 
 // #region Scan state
@@ -36,6 +36,13 @@ export function parseLineIncremental(
   }
 
   const content = raw.slice(indent)
+
+  // Comment lines vanish in a lexical pre-pass: they are removed before
+  // blank-line tracking and strict validation, and are never counted as
+  // rows, items, entries, or blank lines
+  if (content[0] === COMMENT_MARKER) {
+    return undefined
+  }
 
   // Track blank lines
   if (!content.trim()) {

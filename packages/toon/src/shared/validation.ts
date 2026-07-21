@@ -1,4 +1,4 @@
-import { DEFAULT_DELIMITER, LIST_ITEM_MARKER } from '../constants.ts'
+import { COMMENT_MARKER, DEFAULT_DELIMITER, LIST_ITEM_MARKER } from '../constants.ts'
 import { isBooleanOrNullLiteral } from './literal-utils.ts'
 
 const NUMERIC_LIKE_PATTERN = /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i
@@ -28,6 +28,7 @@ export function isValidUnquotedKey(key: string): boolean {
  * - Contains control characters (newlines, tabs, etc.)
  * - Contains the active delimiter
  * - Starts with a list marker (hyphen)
+ * - Starts with a comment marker (#)
  */
 export function isSafeUnquoted(value: string, delimiter: string = DEFAULT_DELIMITER): boolean {
   if (!value) {
@@ -71,6 +72,11 @@ export function isSafeUnquoted(value: string, delimiter: string = DEFAULT_DELIMI
 
   // Check for hyphen at start (list marker)
   if (value.startsWith(LIST_ITEM_MARKER)) {
+    return false
+  }
+
+  // Check for comment marker at start (would read as a comment line)
+  if (value.startsWith(COMMENT_MARKER)) {
     return false
   }
 
