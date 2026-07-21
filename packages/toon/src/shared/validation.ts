@@ -1,7 +1,7 @@
 import { COMMENT_MARKER, DEFAULT_DELIMITER, LIST_ITEM_MARKER } from '../constants.ts'
 import { isBooleanOrNullLiteral } from './literal-utils.ts'
 
-const NUMERIC_LIKE_PATTERN = /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i
+const NUMERIC_LIKE_PATTERN = /^[+-]?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i
 const LEADING_ZERO_PATTERN = /^0\d+$/
 
 /**
