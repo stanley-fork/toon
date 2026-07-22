@@ -220,6 +220,20 @@ function keylessKeyedError(line: ParsedLine): ToonDecodeError {
   )
 }
 
+function keylessHeaderError(line: ParsedLine): ToonDecodeError {
+  return new ToonDecodeError(
+    'Keyless array header is only valid at the document root or as a list item',
+    { line: line.lineNumber, source: line.raw },
+  )
+}
+
+function keylessFieldsHeaderError(line: ParsedLine): ToonDecodeError {
+  return new ToonDecodeError(
+    'Keyless header with a fields segment is only valid at the document root',
+    { line: line.lineNumber, source: line.raw },
+  )
+}
+
 // Strict decoding never silently discards input: once the root form is
 // complete, any remaining line is an error rather than dropped data
 function assertFullyConsumedSync(cursor: StreamingLineCursor, strict: boolean): void {
@@ -278,10 +292,10 @@ function* decodeKeyValueSync(
     return
   }
 
-  // The keyless keyed form is only valid as the document's root header;
+  // Keyless headers are only valid at the document root or as list items;
   // non-strict decoders fall through to key-value parsing
-  if (arrayHeader?.header.keyed && arrayHeader.header.key === undefined && options.strict) {
-    throw keylessKeyedError(line)
+  if (arrayHeader && arrayHeader.header.key === undefined && options.strict) {
+    throw arrayHeader.header.keyed ? keylessKeyedError(line) : keylessHeaderError(line)
   }
 
   // Regular key-value pair
@@ -647,10 +661,11 @@ function* decodeListItemSync(
   if (isArrayHeaderContent(afterHyphen)) {
     const arrayHeader = withLine(itemLine, () => parseArrayHeaderLine(afterHyphen, DEFAULT_DELIMITER, options.strict))
     if (arrayHeader) {
-      // There is no keyless keyed list-item form (`- [N:]{fields}:`)
-      if (arrayHeader.header.keyed) {
+      // There is no keyless keyed (`- [N:]{fields}:`) or fields-bearing
+      // (`- [N]{fields}:`) list-item form
+      if (arrayHeader.header.keyed || arrayHeader.header.fields !== undefined) {
         if (options.strict) {
-          throw keylessKeyedError(itemLine)
+          throw arrayHeader.header.keyed ? keylessKeyedError(itemLine) : keylessFieldsHeaderError(itemLine)
         }
       }
       else {
@@ -851,10 +866,10 @@ async function* decodeKeyValueAsync(
     return
   }
 
-  // The keyless keyed form is only valid as the document's root header;
+  // Keyless headers are only valid at the document root or as list items;
   // non-strict decoders fall through to key-value parsing
-  if (arrayHeader?.header.keyed && arrayHeader.header.key === undefined && options.strict) {
-    throw keylessKeyedError(line)
+  if (arrayHeader && arrayHeader.header.key === undefined && options.strict) {
+    throw arrayHeader.header.keyed ? keylessKeyedError(line) : keylessHeaderError(line)
   }
 
   // Regular key-value pair
@@ -1199,10 +1214,11 @@ async function* decodeListItemAsync(
   if (isArrayHeaderContent(afterHyphen)) {
     const arrayHeader = withLine(itemLine, () => parseArrayHeaderLine(afterHyphen, DEFAULT_DELIMITER, options.strict))
     if (arrayHeader) {
-      // There is no keyless keyed list-item form (`- [N:]{fields}:`)
-      if (arrayHeader.header.keyed) {
+      // There is no keyless keyed (`- [N:]{fields}:`) or fields-bearing
+      // (`- [N]{fields}:`) list-item form
+      if (arrayHeader.header.keyed || arrayHeader.header.fields !== undefined) {
         if (options.strict) {
-          throw keylessKeyedError(itemLine)
+          throw arrayHeader.header.keyed ? keylessKeyedError(itemLine) : keylessFieldsHeaderError(itemLine)
         }
       }
       else {
