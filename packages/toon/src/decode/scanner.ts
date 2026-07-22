@@ -1,5 +1,5 @@
 import type { BlankLineInfo, Depth, ParsedLine } from '../types.ts'
-import { COMMENT_MARKER, SPACE, TAB } from '../constants.ts'
+import { CARRIAGE_RETURN, COMMENT_MARKER, SPACE, TAB } from '../constants.ts'
 import { ToonDecodeError } from './errors.ts'
 
 // #region Scan state
@@ -28,6 +28,12 @@ export function parseLineIncremental(
 ): ParsedLine | undefined {
   state.lineNumber++
   const lineNumber = state.lineNumber
+
+  // A trailing carriage return belongs to a CRLF line terminator, not to
+  // the line's content
+  if (raw[raw.length - 1] === CARRIAGE_RETURN) {
+    raw = raw.slice(0, -1)
+  }
 
   // Count leading spaces
   let indent = 0
