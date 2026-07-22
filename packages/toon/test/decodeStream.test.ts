@@ -184,6 +184,12 @@ describe('streaming decode', () => {
       { name: 'root primitive', input: 'Hello World' },
       { name: 'root array', input: '[2]:\n  - Apple\n  - Banana' },
       { name: 'empty input', input: '' },
+      { name: 'keyed tabular object', input: 'servers[2:]{host,port}:\n  alpha: a.example.com,8080\n  beta: b.example.com,9090' },
+      { name: 'keyless keyed root', input: '[2:]{age,city}:\n  alice: 30,Berlin\n  bob: 25,Paris' },
+      { name: 'nested field groups', input: 'orders[2]{id,customer{name,country},total}:\n  1,Ada,DE,9.99\n  2,Bob,FR,14.5' },
+      { name: 'comment lines around fields', input: '# header\na: 1\n# note\nb: 2' },
+      { name: 'comment lines between tabular rows', input: 'users[2]{name}:\n  Ada\n# note\n  Bob' },
+      { name: 'keyed tabular header on a hyphen line', input: 'items[1]:\n  - users[2:]{v}:\n      a: 1\n      b: 2\n    status: active' },
     ]
 
     for (const { name, input } of equivalenceCases) {
@@ -279,6 +285,23 @@ describe('streaming decode', () => {
 
       expect(events[0]).toEqual({ type: 'startObject' })
     })
+
+    const strictErrorCases = [
+      { name: 'an over-indented line under a primitive field', lines: ['a: 1', '    b: 2'], message: 'Over-indented line' },
+      { name: 'trailing content after a root array', lines: ['[2]: 1,2', 'junk: 3'], message: 'Unexpected content after the document root' },
+      { name: 'an over-indented line inside a keyed tabular object', lines: ['m[2:]{v}:', '  a: 1', '    x: 2', '  b: 2'], message: 'Unexpected indentation inside keyed tabular object' },
+      { name: 'an entry row without a colon', lines: ['m[1:]{v}:', '  noentrycolon'], message: 'Expected entry row inside keyed tabular object' },
+      { name: 'duplicate entry keys', lines: ['m[2:]{v}:', '  a: 1', '  a: 2'], message: 'Duplicate sibling key' },
+      { name: 'a keyed entry count mismatch', lines: ['m[2:]{v}:', '  a: 1'], message: 'keyed entries' },
+      { name: 'a keyed entry cell width mismatch', lines: ['m[1:]{v}:', '  a: 1,2'], message: 'keyed entry cells' },
+    ]
+
+    for (const { name, lines, message } of strictErrorCases) {
+      it(`rejects ${name}, matching decodeStreamSync`, async () => {
+        expect(() => Array.from(decodeStreamSync(lines))).toThrow(message)
+        await expect(collect(decodeStream(asyncLines(lines)))).rejects.toThrow(message)
+      })
+    }
   })
 
   describe('buildValueFromEvents', () => {
