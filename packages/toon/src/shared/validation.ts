@@ -2,7 +2,6 @@ import { COMMENT_MARKER, DEFAULT_DELIMITER, LIST_ITEM_MARKER } from '../constant
 import { isBooleanOrNullLiteral } from './literal-utils.ts'
 
 const NUMERIC_LIKE_PATTERN = /^[+-]?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i
-const LEADING_ZERO_PATTERN = /^0\d+$/
 
 /**
  * Checks if a key can be used without quotes.
@@ -76,5 +75,5 @@ export function isSafeUnquoted(value: string, delimiter: string = DEFAULT_DELIMI
 }
 
 function isNumericLike(value: string): boolean {
-  return NUMERIC_LIKE_PATTERN.test(value) || LEADING_ZERO_PATTERN.test(value)
+  return NUMERIC_LIKE_PATTERN.test(value)
 }
