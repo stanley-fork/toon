@@ -36,7 +36,7 @@ export function* encodeJsonValue(value: JsonValue, options: ResolvedEncodeOption
 
 // #region Object encoding
 
-export function* encodeObjectLines(
+function* encodeObjectLines(
   value: JsonObject,
   depth: Depth,
   options: ResolvedEncodeOptions,
@@ -46,7 +46,7 @@ export function* encodeObjectLines(
   }
 }
 
-export function* encodeKeyValuePairLines(
+function* encodeKeyValuePairLines(
   key: string,
   value: JsonValue,
   depth: Depth,
@@ -78,7 +78,7 @@ export function* encodeKeyValuePairLines(
 
 // #region Keyed tabular objects
 
-export function extractKeyedFields(value: JsonObject): FieldNode[] | undefined {
+function extractKeyedFields(value: JsonObject): FieldNode[] | undefined {
   const entryValues = Object.values(value)
 
   // At least two entries whose values are uniform non-empty objects
@@ -122,7 +122,7 @@ function* encodeKeyedEntryRowsLines(
 
 // #region Array encoding
 
-export function* encodeArrayLines(
+function* encodeArrayLines(
   key: string | undefined,
   value: JsonArray,
   depth: Depth,
@@ -167,7 +167,7 @@ export function* encodeArrayLines(
 
 // #region Array of arrays (expanded format)
 
-export function* encodeArrayOfArraysAsListItemsLines(
+function* encodeArrayOfArraysAsListItemsLines(
   prefix: string | undefined,
   values: readonly JsonArray[],
   depth: Depth,
@@ -184,7 +184,7 @@ export function* encodeArrayOfArraysAsListItemsLines(
   }
 }
 
-export function encodeInlineArrayLine(values: readonly EncodablePrimitive[], delimiter: string, prefix?: string): string {
+function encodeInlineArrayLine(values: readonly EncodablePrimitive[], delimiter: string, prefix?: string): string {
   const header = formatHeader(values.length, { key: prefix, delimiter })
   const joinedValue = encodeAndJoinPrimitives(values, delimiter)
 
@@ -198,7 +198,7 @@ export function encodeInlineArrayLine(values: readonly EncodablePrimitive[], del
 
 // #region Array of objects (tabular format)
 
-export function* encodeArrayOfObjectsAsTabularLines(
+function* encodeArrayOfObjectsAsTabularLines(
   prefix: string | undefined,
   rows: readonly JsonObject[],
   header: readonly FieldNode[],
@@ -211,7 +211,7 @@ export function* encodeArrayOfObjectsAsTabularLines(
   yield* writeTabularRowsLines(rows, header, depth + 1, options)
 }
 
-export function extractTabularHeader(rows: readonly JsonObject[]): FieldNode[] | undefined {
+function extractTabularHeader(rows: readonly JsonObject[]): FieldNode[] | undefined {
   if (rows.length === 0)
     return
 
@@ -292,7 +292,7 @@ function* writeTabularRowsLines(
 
 // #region Array of objects (expanded format)
 
-export function* encodeMixedArrayAsListItemsLines(
+function* encodeMixedArrayAsListItemsLines(
   prefix: string | undefined,
   items: readonly JsonValue[],
   depth: Depth,
@@ -306,7 +306,7 @@ export function* encodeMixedArrayAsListItemsLines(
   }
 }
 
-export function* encodeObjectAsListItemLines(
+function* encodeObjectAsListItemLines(
   obj: JsonObject,
   depth: Depth,
   options: ResolvedEncodeOptions,
