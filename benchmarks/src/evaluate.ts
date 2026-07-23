@@ -1,4 +1,4 @@
-import type { LanguageModelV3 } from '@ai-sdk/provider'
+import type { LanguageModelV4 } from '@ai-sdk/provider'
 import type { EvaluationResult, Question } from './types.ts'
 import { anthropic } from '@ai-sdk/anthropic'
 import { google } from '@ai-sdk/google'
@@ -10,7 +10,7 @@ import { compareAnswers } from './normalize.ts'
 /**
  * Models used for evaluation
  */
-export const models: LanguageModelV3[] = [
+export const models: LanguageModelV4[] = [
   anthropic('claude-haiku-4-5-20251001'),
   google('gemini-3-flash-preview'),
   openai('gpt-5-nano'),
@@ -58,7 +58,7 @@ export async function evaluateQuestion(
     question: Question
     formatName: string
     formattedData: string
-    model: LanguageModelV3
+    model: LanguageModelV4
   },
 ): Promise<EvaluationResult> {
   const primer = PRIMERS[formatName] ?? ''

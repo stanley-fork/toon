@@ -1,9 +1,12 @@
 minimumReleaseAgeExclude:
-  - '@ai-sdk/gateway@3.0.151'
-  - '@ai-sdk/google@3.0.94'
-  - '@ai-sdk/openai-compatible@2.0.61'
-  - '@ai-sdk/xai@3.0.108'
-  - ai@6.0.228
+  - '@ai-sdk/anthropic@4.0.18'
+  - '@ai-sdk/gateway@4.0.27'
+  - '@ai-sdk/google@4.0.22'
+  - '@ai-sdk/openai@4.0.18'
+  - '@ai-sdk/openai-compatible@3.0.14'
+  - '@ai-sdk/provider@4.0.3'
+  - '@ai-sdk/xai@4.0.18'
+  - ai@7.0.35
   - tsdown@0.22.8
   - '@toon-format/spec@4.0.0'
 
